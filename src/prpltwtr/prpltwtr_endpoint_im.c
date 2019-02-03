@@ -211,7 +211,7 @@ void twitter_status_data_update_conv(TwitterEndpointIm * ctx, char *buddy_name, 
     gchar          *conv_name;
     gchar          *tweet;
 
-    if (!s || !s->text)
+    if (!s || !s->full_text)
         return;
 
     if (s->id && strtoll(s->id, NULL, 10) > strtoll(twitter_endpoint_im_get_since_id(ctx), NULL, 10)) {
@@ -221,7 +221,7 @@ void twitter_status_data_update_conv(TwitterEndpointIm * ctx, char *buddy_name, 
 
     conv_name = twitter_endpoint_im_buddy_name_to_conv_name(ctx, buddy_name);
 
-    tweet = twitter_format_tweet(account, buddy_name, s->text, s->id, PURPLE_CONV_TYPE_IM, conv_name, ctx->settings->type == TWITTER_IM_TYPE_AT_MSG, s->in_reply_to_status_id, s->favorited);
+    tweet = twitter_format_tweet(account, buddy_name, s->full_text, s->id, PURPLE_CONV_TYPE_IM, conv_name, ctx->settings->type == TWITTER_IM_TYPE_AT_MSG, s->in_reply_to_status_id, s->favorited);
 
     //Account received an im
     /* TODO get in_reply_to_status? s->in_reply_to_screen_name

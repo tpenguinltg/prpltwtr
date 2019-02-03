@@ -141,7 +141,7 @@ TwitterUserTweet *twitter_search_entry_node_parse(TwitterRequestor * r, gpointer
         icon_url = twitter_search_entry_get_icon_url(r, entry_node);
         entry = twitter_user_tweet_new(screen_name_str, icon_url, NULL, NULL);
 
-        tweet->text = r->format->get_str(entry_node, "title");
+        tweet->full_text = r->format->get_str(entry_node, "title");
         tweet->created_at = purple_str_to_time(created_at_str, TRUE, NULL, NULL, NULL);
         entry->status = tweet;
 
@@ -262,9 +262,9 @@ TwitterTweet   *twitter_status_node_parse(TwitterRequestor * r, gpointer status_
         return NULL;
 
     status = g_new0(TwitterTweet, 1);
-    status->text = format->get_str(status_node, "text");
+    status->full_text = format->get_str(status_node, "full_text");
 
-    purple_debug_info("prprltwtr/status_node_parse", "Status: %s\n", status->text);
+    purple_debug_info("prprltwtr/status_node_parse", "Status: %s\n", status->full_text);
 
     if ((data = format->get_str(status_node, "created_at"))) {
         time_t          created_at = twitter_status_parse_timestamp(data);
@@ -296,8 +296,8 @@ TwitterTweet   *twitter_status_node_parse(TwitterRequestor * r, gpointer status_
         if ((rt_user_node = format->get_node(retweeted_status_node, "user"))) {
             rt_screen_name = format->get_str(rt_user_node, "screen_name");
             // We don't need the original text, since it's cut off
-            g_free(status->text);
-            status->text = g_strconcat("RT @", rt_screen_name, ": ", rt_text, NULL);
+            g_free(status->full_text);
+            status->full_text = g_strconcat("RT @", rt_screen_name, ": ", rt_text, NULL);
             g_free(rt_screen_name);
         }
         g_free(rt_text);
@@ -409,7 +409,7 @@ GList          *twitter_dms_node_parse(TwitterRequestor * r, gpointer dms_node)
         TwitterTweet   *tweet = twitter_status_node_parse(r, dms_node);
         TwitterUserTweet *data = twitter_user_tweet_new(user->screen_name, user->profile_image_url, user, tweet);
 
-        purple_debug_info(GENERIC_PROTOCOL_ID, "%s: object: %s\n", G_STRFUNC, tweet->text);
+        purple_debug_info(GENERIC_PROTOCOL_ID, "%s: object: %s\n", G_STRFUNC, tweet->full_text);
         dms = g_list_prepend(dms, data);
     }
 
@@ -508,7 +508,7 @@ GList          *twitter_statuses_node_parse(TwitterRequestor * r, gpointer statu
         TwitterTweet   *tweet = twitter_status_node_parse(r, statuses_node);
         TwitterUserTweet *data = twitter_user_tweet_new(user->screen_name, user->profile_image_url, user, tweet);
 
-        purple_debug_info(GENERIC_PROTOCOL_ID, "%s: object: %s\n", G_STRFUNC, tweet->text);
+        purple_debug_info(GENERIC_PROTOCOL_ID, "%s: object: %s\n", G_STRFUNC, tweet->full_text);
         statuses = g_list_prepend(statuses, data);
     }
 
@@ -556,9 +556,9 @@ void twitter_status_data_free(TwitterTweet * status)
     if (status == NULL)
         return;
 
-    if (status->text != NULL)
-        g_free(status->text);
-    status->text = NULL;
+    if (status->full_text != NULL)
+        g_free(status->full_text);
+    status->full_text = NULL;
 
     if (status->in_reply_to_screen_name)
         g_free(status->in_reply_to_screen_name);

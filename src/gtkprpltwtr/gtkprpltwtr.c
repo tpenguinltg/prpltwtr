@@ -150,7 +150,7 @@ static void twitter_get_status_success_cb(TwitterRequestor * r, gpointer node, g
         return;
 
     status = twitter_status_node_parse(r, node);
-    if (!status || !status->text || !status->id) {
+    if (!status || !status->full_text || !status->id) {
         purple_debug_error(PLUGIN_ID, "Essential information missing from the tweet!\n");
         return;
     }
@@ -313,7 +313,7 @@ static gboolean twitter_uri_handler(const char *proto, const char *cmd_arg, GHas
         const char     *id_str,
                        *user,
                        *text;
-        char            others[140];
+        char            others[280];
         int             i,
                         j;
         PurpleConversation *conv;

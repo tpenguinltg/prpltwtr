@@ -183,7 +183,7 @@ void twitter_api_get_info(PurpleConnection * gc, const char *username)
                 }
             }
             if (status_data) {
-                purple_notify_user_info_add_pair(info, _("Last status"), status_data->text);
+                purple_notify_user_info_add_pair(info, _("Last status"), status_data->full_text);
             }
 //          twitter_user_tweet_free(data);
         }
@@ -269,6 +269,7 @@ static void twitter_api_send_request_single(TwitterRequestor * r, const gchar * 
 
     purple_debug_info(purple_account_get_protocol_id(r->account), "BEGIN: %s: url %s\n", G_STRFUNC, url);
 
+    twitter_request_params_add(params, twitter_request_param_new("tweet_mode", "extended"));
     twitter_request_params_add(params, twitter_request_param_new_int("count", count));
     /*twitter_request_params_add(params, twitter_request_param_new_int("page", page)); */
     if (since_id != NULL && g_strcmp0("0", since_id) != 0)
@@ -296,6 +297,7 @@ static void twitter_api_get_all_since(TwitterRequestor * r, const gchar * url, g
     if (!params) {
         params = twitter_request_params_new();
     }
+    twitter_request_params_add(params, twitter_request_param_new("tweet_mode", "extended"));
     if (since_id != NULL && g_strcmp0("0", since_id) != 0)
         twitter_request_params_add(params, twitter_request_param_new("since_id", since_id));
 

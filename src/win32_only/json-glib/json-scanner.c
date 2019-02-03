@@ -274,8 +274,8 @@ json_scanner_new (void)
   scanner->symbol_table = g_hash_table_new (json_scanner_key_hash,
                                             json_scanner_key_equal);
   scanner->input_fd = -1;
-  scanner->text = NULL;
-  scanner->text_end = NULL;
+  scanner->full_text = NULL;
+  scanner->full_text_end = NULL;
   scanner->buffer = NULL;
   scanner->scope_id = 0;
   
@@ -712,8 +712,8 @@ json_scanner_input_file (JsonScanner *scanner,
   scanner->next_token = G_TOKEN_NONE;
 
   scanner->input_fd = input_fd;
-  scanner->text = NULL;
-  scanner->text_end = NULL;
+  scanner->full_text = NULL;
+  scanner->full_text_end = NULL;
 
   if (!scanner->buffer)
     scanner->buffer = g_new (gchar, READ_BUFFER_SIZE + 1);
@@ -740,8 +740,8 @@ json_scanner_input_text (JsonScanner *scanner,
   scanner->next_token = G_TOKEN_NONE;
 
   scanner->input_fd = -1;
-  scanner->text = text;
-  scanner->text_end = text + text_len;
+  scanner->full_text = text;
+  scanner->full_text_end = text + text_len;
 
   if (scanner->buffer)
     {
@@ -753,8 +753,8 @@ json_scanner_input_text (JsonScanner *scanner,
 static guchar
 json_scanner_peek_next_char (JsonScanner *scanner)
 {
-  if (scanner->text < scanner->text_end)
-    return *scanner->text;
+  if (scanner->full_text < scanner->full_text_end)
+    return *scanner->full_text;
   else if (scanner->input_fd >= 0)
     {
       gint count;
@@ -775,8 +775,8 @@ json_scanner_peek_next_char (JsonScanner *scanner)
 	}
       else
 	{
-	  scanner->text = buffer;
-	  scanner->text_end = buffer + count;
+	  scanner->full_text = buffer;
+	  scanner->full_text_end = buffer + count;
 
 	  return *buffer;
 	}
@@ -796,16 +796,16 @@ json_scanner_sync_file_offset (JsonScanner *scanner)
    * onto the current scanning position.
    */
 
-  if (scanner->input_fd >= 0 && scanner->text_end > scanner->text)
+  if (scanner->input_fd >= 0 && scanner->full_text_end > scanner->full_text)
     {
       gint buffered;
 
-      buffered = scanner->text_end - scanner->text;
+      buffered = scanner->full_text_end - scanner->full_text;
       if (lseek (scanner->input_fd, - buffered, SEEK_CUR) >= 0)
 	{
 	  /* we succeeded, blow our buffer's contents now */
-	  scanner->text = NULL;
-	  scanner->text_end = NULL;
+	  scanner->full_text = NULL;
+	  scanner->full_text_end = NULL;
 	}
       else
 	errno = 0;
@@ -819,8 +819,8 @@ json_scanner_get_char (JsonScanner *scanner,
 {
   guchar fchar;
 
-  if (scanner->text < scanner->text_end)
-    fchar = *(scanner->text++);
+  if (scanner->full_text < scanner->full_text_end)
+    fchar = *(scanner->full_text++);
   else if (scanner->input_fd >= 0)
     {
       gint count;
@@ -840,13 +840,13 @@ json_scanner_get_char (JsonScanner *scanner,
 	}
       else
 	{
-	  scanner->text = buffer + 1;
-	  scanner->text_end = buffer + count;
+	  scanner->full_text = buffer + 1;
+	  scanner->full_text_end = buffer + count;
 	  fchar = *buffer;
 	  if (!fchar)
 	    {
 	      json_scanner_sync_file_offset (scanner);
-	      scanner->text_end = scanner->text;
+	      scanner->full_text_end = scanner->full_text;
 	      scanner->input_fd = -1;
 	    }
 	}
@@ -1306,7 +1306,7 @@ json_scanner_get_token_ll (JsonScanner *scanner,
   config = scanner->config;
   (*value_p).v_int64 = 0;
   
-  if ((scanner->text >= scanner->text_end && scanner->input_fd < 0) ||
+  if ((scanner->full_text >= scanner->full_text_end && scanner->input_fd < 0) ||
       scanner->token == G_TOKEN_EOF)
     {
       *token_p = G_TOKEN_EOF;

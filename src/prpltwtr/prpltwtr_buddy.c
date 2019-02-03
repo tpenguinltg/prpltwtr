@@ -56,7 +56,7 @@ static void twitter_buddy_touch_state_with_cutoff(PurpleBuddy * buddy, time_t cu
     PurpleAccount  *account = purple_buddy_get_account(buddy);
     TwitterUserTweet *user_tweet = twitter_buddy_get_buddy_data(buddy);
     TwitterTweet   *tweet = user_tweet ? user_tweet->status : NULL;
-    gchar          *tweet_message = tweet ? tweet->text : NULL;
+    gchar          *tweet_message = tweet ? tweet->full_text : NULL;
 
 #ifdef _HAZE_
     //Haze has chats as buddies. Keep them always online
@@ -123,7 +123,7 @@ void twitter_buddy_set_status_data(PurpleAccount * account, const char *src_user
     if (!s)
         return;
 
-    if (!s->text) {
+    if (!s->full_text) {
         twitter_status_data_free(s);
         return;
     }
@@ -142,14 +142,14 @@ void twitter_buddy_set_status_data(PurpleAccount * account, const char *src_user
     }
 
     if (buddy_data->status != NULL && s != buddy_data->status) {
-        status_text_same = (strcmp(buddy_data->status->text, s->text) == 0);
+        status_text_same = (strcmp(buddy_data->status->full_text, s->full_text) == 0);
         twitter_status_data_free(buddy_data->status);
     }
 
     buddy_data->status = s;
 
     if (!status_text_same) {
-        purple_prpl_got_user_status(b->account, b->name, cutoff && s && s->created_at < cutoff ? TWITTER_STATUS_OFFLINE : TWITTER_STATUS_ONLINE, "message", s ? s->text : NULL, NULL);
+        purple_prpl_got_user_status(b->account, b->name, cutoff && s && s->created_at < cutoff ? TWITTER_STATUS_OFFLINE : TWITTER_STATUS_ONLINE, "message", s ? s->full_text : NULL, NULL);
     }
 }
 

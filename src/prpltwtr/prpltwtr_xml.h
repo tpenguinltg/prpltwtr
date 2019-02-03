@@ -59,7 +59,7 @@ typedef struct {
 } TwitterUserData;
 
 typedef struct {
-    gchar          *text;
+    gchar          *full_text;
     gchar          *id;
     gchar          *in_reply_to_status_id;
     gchar          *in_reply_to_screen_name;

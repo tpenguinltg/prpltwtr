@@ -106,7 +106,7 @@ static void twitter_get_home_timeline_parse_statuses(TwitterEndpointChat * endpo
     l = g_list_last(statuses);
     user_tweet = l->data;
     if (user_tweet && user_tweet->status) {
-        purple_debug_info(purple_account_get_protocol_id(endpoint_chat->account), "%s: has tweet: %s\n", G_STRFUNC, user_tweet->status->text);
+        purple_debug_info(purple_account_get_protocol_id(endpoint_chat->account), "%s: has tweet: %s\n", G_STRFUNC, user_tweet->status->full_text);
 
         if (user_tweet->status->id < twitter_connection_get_last_home_timeline_id(gc)) {
             purple_debug_info(purple_account_get_protocol_id(endpoint_chat->account), "Setting last as %s, although it's less than the previous %s\n", user_tweet->status->id, twitter_connection_get_last_home_timeline_id(gc));

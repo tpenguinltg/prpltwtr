@@ -73,7 +73,7 @@
 /* We'll handle TWITTER_URI://foo as an internal action */
 #define TWITTER_URI "prpltwtr"
 
-#define MAX_TWEET_LENGTH 140
+#define MAX_TWEET_LENGTH 3000
 
 #define TWITTER_STATUS_ONLINE	"online"
 #define TWITTER_STATUS_OFFLINE	"offline"

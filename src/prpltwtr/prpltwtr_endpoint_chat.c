@@ -314,7 +314,7 @@ void twitter_chat_got_tweet(TwitterEndpointChat * endpoint_chat, TwitterUserTwee
 
     purple_signal_emit(purple_buddy_icons_get_handle(), "prpltwtr-update-iconurl", purple_conversation_get_account(conv), tweet->screen_name, tweet->icon_url, tweet->status->created_at);
 
-    twitter_chat_add_tweet(conv, tweet->screen_name, tweet->status->text, tweet->status->id, tweet->status->created_at, tweet->status->in_reply_to_status_id, tweet->status->favorited);
+    twitter_chat_add_tweet(conv, tweet->screen_name, tweet->status->full_text, tweet->status->id, tweet->status->created_at, tweet->status->in_reply_to_status_id, tweet->status->favorited);
 }
 
 static gboolean twitter_sent_tweets_contains_id(TwitterEndpointChat * ctx, gchar * id)
@@ -525,11 +525,11 @@ static void twitter_endpoint_chat_send_success_cb(PurpleAccount * account, gpoin
 #ifndef _HAZE_
     PurpleConversation *conv;
 
-    if (ctx && tweet && tweet->text && (conv = twitter_endpoint_chat_find_open_conv(ctx))) {
+    if (ctx && tweet && tweet->full_text && (conv = twitter_endpoint_chat_find_open_conv(ctx))) {
         char          **userparts = g_strsplit(purple_account_get_username(account), "@", 2);
         const char     *sn = userparts[0];
         purple_signal_emit(purple_buddy_icons_get_handle(), "prpltwtr-update-iconurl", account, user_tweet->screen_name, user_tweet->icon_url, user_tweet->status->created_at);
-        twitter_chat_add_tweet(conv, sn, tweet->text, tweet->id, tweet->created_at, tweet->in_reply_to_status_id, tweet->favorited);
+        twitter_chat_add_tweet(conv, sn, tweet->full_text, tweet->id, tweet->created_at, tweet->in_reply_to_status_id, tweet->favorited);
         g_strfreev(userparts);
     }
 #endif

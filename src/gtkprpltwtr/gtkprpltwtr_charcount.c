@@ -134,10 +134,10 @@ static void changed_cb(GtkTextBuffer * textbuffer, gpointer user_data)
     counter = g_object_get_data(G_OBJECT(box), PLUGIN_ID "-counter");
     if (counter)
         gtk_label_set_text(GTK_LABEL(counter), count);
-    if (num_bytes > 140) {
+    if (num_bytes > 280) {
         gdk_color_parse("#DC143C", &color);      /* HTML Crimson */
         gtk_widget_modify_fg(counter, GTK_STATE_NORMAL, &color);
-    } else if (num_bytes >= 130) {
+    } else if (num_bytes >= 260) {
         gdk_color_parse("#FF4500", &color);      /* HTML Orangered */
         gtk_widget_modify_fg(counter, GTK_STATE_NORMAL, &color);
     } else {
